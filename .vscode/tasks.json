@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+      {
+          "label": "Build C Program",
+          "type": "shell",
+          "command": "gcc",
+          "args": [
+              "-I", "C:/Program Files (x86)/National Instruments/NI-DAQ/DAQmx ANSI C Dev/include",              // NIDAQmx.hファイルが含まれるディレクトリパス
+              "-L", "C:/Program Files (x86)/National Instruments/Shared/ExternalCompilerSupport/C/lib64/msvc",  // NIDAQmx.libファイルが含まれるディレクトリパス
+              "-lNIDAQmx",                                                                                      // NI-DAQmxライブラリをリンクするためのオプション
+              "C:/Users/sasak/Lab/code/nidaq/src/main.c",                                                       // コンパイルするCファイルを指定
+              "-o",                                                                                             // 出力ファイル名を指定するというコマンド
+              "C:/Users/sasak/Lab/code/nidaq/bin/main.exe"                                                      // 出力ファイル
+          ],
+          "group": {
+              "kind": "build",
+              "isDefault": true
+          },
+          "problemMatcher": ["$gcc"],
+          "detail": "コンパイルタスク"
+      }
+  ]
+}
