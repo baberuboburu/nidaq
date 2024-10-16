@@ -1,34 +1,47 @@
 import asyncio
 import nidaqmx
-from components.input import Input
-# from components.outout import Output
+from components.daq import Daq
+from components.function import Function
+from components.plot import Plot
 
 
 # 変数
+func = 'dc'  # "dc", "sinx", "cosx", "triagle", "sawtooth"
 t_max = 10
 sampling_rate = 0.1
-user_name = 'sasaki'
+username = 'sasaki'
 filename = 'test'
 
 
-async def run(t_max: float, sampling_rate: float, user_name: str, filename: str):
+async def run(func: str, t_max: float, sampling_rate: float, username: str, filename: str):
+  # 定数
+  n = int(t_max / sampling_rate)
+
   # インスタンス化
-  input = Input(t_max, sampling_rate, user_name, filename)
-  print('インスタンス化完了')
+  daq = Daq(n, sampling_rate, username, filename)
+  function = Function(n)
+  plot = Plot(username, filename)
+
+  # 出力電圧の定義
+  output_vols = await function.main(func, n, vol=0.5)
+  print(len(output_vols))
 
   # タスクを作成
   task = nidaqmx.Task()
-  print(type(task))
 
-  # 入力の取り込み
-  task, data = input.input(task)
+  # 電圧の印加, 出力の取り込み
+  task, data = await daq.main(task, output_vols)
   print(data)
 
   # タスクの終了
   task.close()
 
+  columns = ['time', 'ref_time', 'output_0']
+  plot = Plot(data, columns)
+  plot.plot()
+
   return
 
 
 if __name__ == '__main__':
-  asyncio.run(run())
+  asyncio.run(run(func, t_max, sampling_rate, username, filename))
