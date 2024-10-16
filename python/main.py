@@ -23,7 +23,7 @@ async def run(func: str, t_max: float, sampling_rate: float, username: str, file
   plot = Plot(username, filename)
 
   # 出力電圧の定義
-  output_vols = await function.main(func, n, vol=0.5)
+  output_vols = await function.main(func, vol=0.5)
   print(len(output_vols))
 
   # タスクを作成
