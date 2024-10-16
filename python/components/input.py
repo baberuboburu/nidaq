@@ -1,5 +1,5 @@
 import nidaqmx
-from nidaq.task import Task
+from nidaqmx.task import Task
 import time
 import datetime
 import os

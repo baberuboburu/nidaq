@@ -12,19 +12,19 @@ class Function():
 
   async def main(self, func: str, vol: float = None, amplitude: float = None, frequency: float = None, sampling_rate: float = None):
     if func == 'dc':
-      return self.dc(vol)
+      return await self.dc(vol)
 
     elif func == 'sinx':
-      return self.sinx(amplitude, frequency, sampling_rate)
+      return await self.sinx(amplitude, frequency, sampling_rate)
     
     elif func == 'cosx':
-      return self.cosx(amplitude, frequency, sampling_rate)
+      return await self.cosx(amplitude, frequency, sampling_rate)
     
     elif func == 'triangle':
-      return self.triangle(amplitude, frequency, sampling_rate)
+      return await self.triangle(amplitude, frequency, sampling_rate)
     
     elif func == 'sawtooth':
-      return self.sawtooth(amplitude, frequency, sampling_rate)
+      return await self.sawtooth(amplitude, frequency, sampling_rate)
     
     else:
       raise ValueError(f'func is invalid. Your select is {func}.\nYou should select in ["dc", "sinx", "cosx", "triagle", "sawtooth"].')

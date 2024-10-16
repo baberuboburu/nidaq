@@ -27,10 +27,11 @@ async def run(func: str, t_max: float, sampling_rate: float, username: str, file
   print(len(output_vols))
 
   # タスクを作成
-  task = nidaqmx.Task()
+  task_ai = nidaqmx.Task()
+  task_ao = nidaqmx.Task()
 
   # 電圧の印加, 出力の取り込み
-  task, data = await daq.main(task, output_vols)
+  task, data = await daq.main(task_ai, task_ao, output_vols)
   print(data)
 
   # タスクの終了

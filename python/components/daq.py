@@ -1,5 +1,5 @@
 import nidaqmx
-from nidaq.task import Task
+from nidaqmx.task import Task
 import time
 import datetime
 from ctypes import windll
@@ -20,27 +20,29 @@ class Daq():
     self.filename = filename
 
 
-  async def main(self, task: Task, outputs: list[float]) -> Tuple[Task, list[str]]:
+  async def main(self, task_ai: Task, task_ao: Task, outputs: list[float]) -> Tuple[Task, Task, list[str]]:
     data = []
 
     # タスクにデバイス(cDAQ1Mod1)のチャンネル(ai0~ai15)を追加
     # task.ai_channels.add_ai_voltage_chan("cDAQ1Mod1/ai0:15")
-    task.ai_channels.add_ai_voltage_chan("cDAQ1Mod1/ai0")
+    task_ai.ai_channels.add_ai_voltage_chan("cDAQ1Mod1/ai0")
+    task_ao.ao_channels.add_ao_voltage_chan("cDAQ1Mod1/ao0")
 
     # OSのタイマー精度を1ミリ秒に変更
     windll.winmm.timeBeginPeriod(1)
 
-    # タスクを開始
-    task.start()
+    # タスクの開始
+    task_ai.start()
+    task_ao.start()
 
     # データの取り込み
     start_time = time.perf_counter()
     for k in range(self.n):
       # 電圧を印加
-      task.write(outputs[k])
+      task_ao.write(outputs[k])
 
       # 電流値を読み取り
-      data_k = task.read()
+      data_k = task_ai.read()
 
       # タイムスタンプを作成
       now = datetime.datetime.now()
@@ -52,12 +54,13 @@ class Daq():
       time.sleep(self.sampling_rate)
     
     # タスクを停止
-    task.stop()
+    task_ai.stop()
+    task_ao.stop()
 
     # OSのタイマー精度をもとに戻す
     windll.winmm.timeEndPeriod(1)
     
-    return task, data
+    return task_ai, task_ao, data
 
 
 

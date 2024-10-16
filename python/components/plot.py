@@ -5,7 +5,7 @@ import os
 
 class Plot:
   def __init__(self, username: str, filename: str):
-    self.file_path = os.join(f'./img/{username}', filename)
+    self.file_path = os.path.join(f'./img/{username}', filename)
     os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
 
 
