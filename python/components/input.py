@@ -32,7 +32,7 @@ class Input():
     # タスクを開始
     task.start()
 
-    # データの入力
+    # データの取り込み(入力)
     start_time = time.perf_counter()
     for _ in range(self.n):
       value = task.read()

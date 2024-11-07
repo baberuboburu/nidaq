@@ -9,13 +9,13 @@ class Plot:
     os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
 
 
-  def plot(self, data: list, columns: list):
+  def plot(self, df: pd.DataFrame, columns: list):
     # DataFrameの設定
-    df = pd.DataFrame(data, columns=columns)
-    time_column = '経過時間'
+    time_column = 'elapsed_time'
 
     # 電圧データを取得
-    voltage_columns = columns[2:]  
+    voltage_columns = columns[2:] 
+    print(voltage_columns)
 
     plt.figure(figsize=(10, 6))
 
@@ -27,6 +27,6 @@ class Plot:
       plt.legend()
       plt.grid(True)
       plt.savefig(self.file_path)
-      plt.show()
+      plt.close()
     
     return

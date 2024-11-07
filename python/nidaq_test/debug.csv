@@ -1,0 +1,83 @@
+Devices connected:
+Device Name: cDAQ1
+Analog Input Channels:
+Analog Output Channels:
+Device Name: cDAQ1Mod1
+Analog Input Channels:
+  cDAQ1Mod1/ai0
+  cDAQ1Mod1/ai1
+  cDAQ1Mod1/ai2
+  cDAQ1Mod1/ai3
+  cDAQ1Mod1/ai4
+  cDAQ1Mod1/ai5
+  cDAQ1Mod1/ai6
+  cDAQ1Mod1/ai7
+  cDAQ1Mod1/ai8
+  cDAQ1Mod1/ai9
+  cDAQ1Mod1/ai10
+  cDAQ1Mod1/ai11
+  cDAQ1Mod1/ai12
+  cDAQ1Mod1/ai13
+  cDAQ1Mod1/ai14
+  cDAQ1Mod1/ai15
+Analog Output Channels:
+Device Name: cDAQ1Mod2
+Analog Input Channels:
+  cDAQ1Mod2/ai0
+  cDAQ1Mod2/ai1
+  cDAQ1Mod2/ai2
+  cDAQ1Mod2/ai3
+  cDAQ1Mod2/ai4
+  cDAQ1Mod2/ai5
+  cDAQ1Mod2/ai6
+  cDAQ1Mod2/ai7
+  cDAQ1Mod2/ai8
+  cDAQ1Mod2/ai9
+  cDAQ1Mod2/ai10
+  cDAQ1Mod2/ai11
+  cDAQ1Mod2/ai12
+  cDAQ1Mod2/ai13
+  cDAQ1Mod2/ai14
+  cDAQ1Mod2/ai15
+Analog Output Channels:
+Device Name: cDAQ1Mod3
+Analog Input Channels:
+  cDAQ1Mod3/ai0
+  cDAQ1Mod3/ai1
+  cDAQ1Mod3/ai2
+  cDAQ1Mod3/ai3
+  cDAQ1Mod3/ai4
+  cDAQ1Mod3/ai5
+  cDAQ1Mod3/ai6
+  cDAQ1Mod3/ai7
+  cDAQ1Mod3/ai8
+  cDAQ1Mod3/ai9
+  cDAQ1Mod3/ai10
+  cDAQ1Mod3/ai11
+  cDAQ1Mod3/ai12
+  cDAQ1Mod3/ai13
+  cDAQ1Mod3/ai14
+  cDAQ1Mod3/ai15
+Analog Output Channels:
+Device Name: cDAQ1Mod4
+Analog Input Channels:
+  cDAQ1Mod4/ai0
+  cDAQ1Mod4/ai1
+  cDAQ1Mod4/ai2
+  cDAQ1Mod4/ai3
+  cDAQ1Mod4/ai4
+  cDAQ1Mod4/ai5
+  cDAQ1Mod4/ai6
+  cDAQ1Mod4/ai7
+  cDAQ1Mod4/ai8
+  cDAQ1Mod4/ai9
+  cDAQ1Mod4/ai10
+  cDAQ1Mod4/ai11
+  cDAQ1Mod4/ai12
+  cDAQ1Mod4/ai13
+  cDAQ1Mod4/ai14
+  cDAQ1Mod4/ai15
+Analog Output Channels:
+Device Name: Dev1
+Analog Input Channels:
+Analog Output Channels:

@@ -1,32 +1,40 @@
 import nidaqmx
+from nidaqmx.constants import AcquisitionType
 from nidaqmx.task import Task
 import time
 import datetime
 from ctypes import windll
 from typing import Tuple
+import pandas as pd
+import os
 
 
 class Daq():
-  def __init__(self, n: int, sampling_rate: float, user_name: str, filename: str):
+  def __init__(self, n: int, sampling_rate: float, username: str, filename: str):
     '''
     n: 測定点数
     sampling_rate: サンプリング間隔
-    user_name: 実験者(ファイル保存時に利用)
+    username: 実験者(ファイル保存時に利用)
     filename: 保存するファイル名
     '''
     self.n = n
     self.sampling_rate = sampling_rate
-    self.user_name = user_name
+    self.username = username
     self.filename = filename
+    self.dir_path = f'./csv/{username}'
+    self.file_path = os.path.join(f'./img/{username}', filename)
 
 
-  async def main(self, task_ai: Task, task_ao: Task, outputs: list[float]) -> Tuple[Task, Task, list[str]]:
+  async def main(self, task_ai: Task, task_ao: Task, outputs: list[float]) -> Tuple[Task, Task, pd.DataFrame]:
     data = []
 
-    # タスクにデバイス(cDAQ1Mod1)のチャンネル(ai0~ai15)を追加
-    # task.ai_channels.add_ai_voltage_chan("cDAQ1Mod1/ai0:15")
-    task_ai.ai_channels.add_ai_voltage_chan("cDAQ1Mod1/ai0")
-    task_ao.ao_channels.add_ao_voltage_chan("cDAQ1Mod1/ao0")
+    # タスクにデバイス(PXI1Slot3)のチャンネル(ai0~ai15, ao0~ao1)を追加
+    task_ai.ai_channels.add_ai_voltage_chan("PXI1Slot3/ai0:15")
+    # task_ao.ao_channels.add_ao_voltage_chan("PXI1Slot3/ao0:1")
+    task_ao.ao_channels.add_ao_voltage_chan("PXI1Slot3/ao0")
+
+    # サンプリングレートを設定
+    task_ai.timing.cfg_samp_clk_timing(rate=self.sampling_rate, sample_mode=AcquisitionType.CONTINUOUS)
 
     # OSのタイマー精度を1ミリ秒に変更
     windll.winmm.timeBeginPeriod(1)
@@ -50,8 +58,8 @@ class Daq():
       data_k[0:0] = [now, step_time - start_time]
       data.append(data_k)
 
-      # サンプリング間隔を開ける
-      time.sleep(self.sampling_rate)
+      # # サンプリング間隔を開ける
+      # time.sleep(self.sampling_rate)
     
     # タスクを停止
     task_ai.stop()
@@ -59,8 +67,24 @@ class Daq():
 
     # OSのタイマー精度をもとに戻す
     windll.winmm.timeEndPeriod(1)
-    
-    return task_ai, task_ao, data
+
+    # dataの形式を変換する
+    df = pd.DataFrame(data, columns=["timestamp", "elapsed_time"] + [f"voltage_{i}" for i in range(16)])
+    outputs_df = pd.DataFrame(outputs, columns=["output_voltage"])
+
+    # dataにoutputsを列として追加
+    df = pd.concat([df, outputs_df], axis=1)
+
+    # データをcsvに保存する
+    await self.save_data(df)
+
+    return task_ai, task_ao, df
+  
+
+  async def save_data(self, data: pd.DataFrame) -> None:
+    os.makedirs(os.path.dirname(self.dir_path), exist_ok=True)
+    data.to_csv(self.file_path, index=False)
+    return
 
 
 
