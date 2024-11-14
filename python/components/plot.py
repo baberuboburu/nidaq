@@ -21,7 +21,7 @@ class Plot:
 
     for col in voltage_columns:
       plt.plot(df[time_column], df[col], label=col)
-      plt.title('Voltage over Time')
+      plt.title(f'Voltage: {col} over Time')
       plt.xlabel('Time (s)')
       plt.ylabel('Voltage (V)')
       plt.legend()

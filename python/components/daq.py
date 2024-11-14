@@ -7,6 +7,7 @@ from ctypes import windll
 from typing import Tuple
 import pandas as pd
 import os
+from components.optimize import Optimize
 
 
 class Daq():
@@ -26,7 +27,9 @@ class Daq():
 
 
   async def main(self, task_ai: Task, task_ao: Task, outputs: list[float]) -> Tuple[Task, Task, pd.DataFrame]:
+    # 初期値
     data = []
+    optimize = Optimize()
 
     # タスクにデバイス(PXI1Slot3)のチャンネル(ai0~ai15, ao0~ao1)を追加
     task_ai.ai_channels.add_ai_voltage_chan("PXI1Slot3/ai0:15")
@@ -71,6 +74,13 @@ class Daq():
     # dataの形式を変換する
     df = pd.DataFrame(data, columns=["timestamp", "elapsed_time"] + [f"voltage_{i}" for i in range(16)])
     outputs_df = pd.DataFrame(outputs, columns=["output_voltage"])
+
+    ''' ここから '''
+    # 入力(まずは2つ)を解析する
+    sorted_columns = optimize.main(df, 'nonlinearity')
+    optimized_column = sorted_columns[0]
+    
+    ''' ここまで '''
 
     # dataにoutputsを列として追加
     df = pd.concat([df, outputs_df], axis=1)
