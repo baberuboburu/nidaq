@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from typing import List
-import time
 
 
 class Optimize():
@@ -16,8 +15,8 @@ class Optimize():
 
 
   async def main(self, df: pd.DataFrame, optimize: str):
-    arranged_df = await self.arrange(df)
-    optimized_ai = await self.routing(arranged_df, optimize)
+    # arranged_df = await self.arrange(df)
+    optimized_ai = await self.routing(df, optimize)
 
     return optimized_ai
   
@@ -52,7 +51,7 @@ class Optimize():
     elif optimize == 'capacitance':
       return await self.capacitance(df)
     elif optimize == 'nonlinearity':
-      return await self.nonlinearity(df)
+      return await self.nonlinearity(df, small_vol=0.2, large_vol=0.8)
     elif optimize == 'histeresis':
       return await self.histeresis(df)
     else:
@@ -86,17 +85,17 @@ class Optimize():
         print(f'------------ {col} ------------')
         # small_volに最も近い点（上から1/4の範囲で）
         print(f'--- {small_vol}V ---')
-        closest_small_idx = (subset_df['output'] - small_vol).abs().idxmin()
+        closest_small_idx = (subset_df['voltage_ao0'] - small_vol).abs().idxmin()
         closest_small_derivatives[col] = derivative_subset_df.loc[closest_small_idx, col]
         print(f"微分係数: {closest_small_derivatives[col]}")
-        print(f"(output, {col}): ({subset_df.loc[closest_small_idx, 'output']}, {subset_df.loc[closest_small_idx, col]})")
+        print(f"(voltage_ao0, {col}): ({subset_df.loc[closest_small_idx, 'voltage_ao0']}, {subset_df.loc[closest_small_idx, col]})")
         
         # large_volに最も近い点（上から1/4の範囲で）
         print(f'--- {large_vol}V ---')
-        closest_large_idx = (subset_df['output'] - large_vol).abs().idxmin()
+        closest_large_idx = (subset_df['voltage_ao0'] - large_vol).abs().idxmin()
         closest_large_derivatives[col] = derivative_subset_df.loc[closest_large_idx, col]
         print(f"微分係数: {closest_large_derivatives[col]}")
-        print(f"(output, {col}): ({subset_df.loc[closest_large_idx, 'output']}, {subset_df.loc[closest_large_idx, col]})")
+        print(f"(voltage_ao0, {col}): ({subset_df.loc[closest_large_idx, 'voltage_ao0']}, {subset_df.loc[closest_large_idx, col]})")
 
     print('-------------------------------------')
     # 微分係数の差が大きい順にカラム名をソート
@@ -116,19 +115,3 @@ class Optimize():
   
   async def histeresis(self):
     return
-
-
-
-import asyncio
-
-df = pd.read_csv('./csv/2-GND1-fast-20240819.csv')
-small = 1.0
-large = 2.5
-
-start_time = time.time()
-optimize = Optimize()
-scales_df = asyncio.run(optimize.scale(df))
-result = asyncio.run(optimize.nonlinearity(scales_df, small, large))
-end_time = time.time()
-elapesed_time = round((end_time - start_time) * 1000, 3)
-print(f'{elapesed_time} ms')

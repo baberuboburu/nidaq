@@ -6,24 +6,32 @@ from components.plot import Plot
 
 
 # 変数
-func = 'dc'  # "dc", "sinx", "cosx", "triagle", "sawtooth"
-t_max = 10
-sampling_rate = 0.1
+func1 = 'dc'  # "dc", "sinx", "cosx", "triangle", "sawtooth"
+func2 = 'dc'
+t_max = 10000
+sampling_rate = 100
+frequency = 1
 username = 'sasaki'
 filename = 'test'
+output_num = 2
+input_num = 1
 
 
-async def run(func: str, t_max: float, sampling_rate: float, username: str, filename: str):
+async def run(t_max: float, sampling_rate: float, username: str, filename: str):
   # 定数
   n = int(t_max / sampling_rate)
+  print(n)
 
   # インスタンス化
   daq = Daq(n, sampling_rate, username, filename)
   function = Function(n)
   plot = Plot(username, filename)
 
-  # 出力電圧の定義
-  output_vols = await function.main(func, vol=0.5)
+  # volsリストを動的に生成
+  # triangle = await function.main(func1, amplitude=1.0, frequency=frequency, sampling_rate=sampling_rate)
+  dc1 = await function.main(func1, vol=1.5)
+  dc2 = await function.main(func2, vol=0.5)
+  output_vols = [dc1, dc2]
 
   # タスクを作成
   task_ai = nidaqmx.Task()
@@ -37,16 +45,14 @@ async def run(func: str, t_max: float, sampling_rate: float, username: str, file
   task_ai.close()
   task_ao.close()
 
-  columns = ['time', 'ref_time', ] + [f"voltage_{i}" for i in range(16)] + ['output_0']
-
-  plot = Plot(username, filename)
-  plot.plot(df, columns)
+  columns = ['time', 'ref_time', ] + [f"voltage_ai{i}" for i in range(1)] + [f"voltage_ao{i}" for i in range(2)]
 
   return
 
 
 if __name__ == '__main__':
-  asyncio.run(run(func, t_max, sampling_rate, username, filename))
+  asyncio.run(run(t_max, sampling_rate, username, filename))
+
 
 
 
