@@ -6,11 +6,11 @@ from components.function import Function
 
 async def multi_inputs_one_output(funcs: List[str], t_max: int, sampling_rate: float, frequencies: List[float], n_cycles: List[int], amplitudes: List[float], username: str, date: str, filename: str, output_num: int, input_num: int):
   # 定数
+  dir_name = f'{username}/{date}/{funcs[0]}{amplitudes[0] * 1000}mV'
   n = int(t_max / sampling_rate)
   print(n)
 
   # インスタンス化
-  dir_name = f'{username}/{date}/{funcs[0]}{amplitudes[0] * 1000}mV'
   daq = Daq(n, sampling_rate, dir_name, filename)
   function = Function(n)
 

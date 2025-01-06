@@ -5,7 +5,7 @@ from dev.multi_inputs_one_output import multi_inputs_one_output
 
 # 1入力他出力
 func = 'triangle'   # "dc", "sinx", "cosx", "triangle", "sawtooth"
-amplitude = 3       # sinやtriangleの振幅
+amplitude = 3       # sinやtriangleの振幅, DCの一定の電圧値
 frequency = None    # sinやcosの周波数
 n_cycle = 1         # triangleを何周期出力するか
 t_max = 10000       # t_max/sampling_rate = n
@@ -14,10 +14,10 @@ output_num = 1      # 入力
 input_num = 7       # 出力
 
 # 他入力1出力
-funcs = ['triangle', 'triangle']  # "dc", "sinx", "cosx", "triangle", "sawtooth"
-amplitudes = [3, 3]
-frequencies = [0.1, 0.1]
-n_cycles = [1, 1]
+funcs = ['triangle', 'dc']  # "dc", "sinx", "cosx", "triangle", "sawtooth"
+amplitudes = [1, 1]
+frequencies = [0.1, None]
+n_cycles = [1, None]
 t_max = 10000
 sampling_rate = 10
 output_num = 2

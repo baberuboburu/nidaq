@@ -5,16 +5,16 @@ from components.function import Function
 
 async def one_input_multi_outputs(func: str, t_max: int, sampling_rate: float, frequency: float, n_cycle: int, amplitude: float, username: str, date: str, filename: str, output_num: int, input_num: int):
   # 定数
+  dir_name = f'{username}/{date}/{func}{amplitude * 1000}mV'
   n = int(t_max / sampling_rate)
   print(n)
 
   # インスタンス化
-  dir_name = f'{username}/{date}/{func}{amplitude * 1000}mV'
   daq = Daq(n, sampling_rate, dir_name, filename)
   function = Function(n)
 
   # volsリストを動的に生成
-  input_function = await function.main(func, amplitude=amplitude, n_cycle=n_cycle)
+  input_function = await function.main(func, vol=amplitude, amplitude=amplitude, n_cycle=n_cycle, frequency=frequency, sampling_rate=sampling_rate)
   output_vols = [input_function]
 
   # タスクを作成
