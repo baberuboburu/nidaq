@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import signal
 
 
 class Function():
@@ -10,7 +11,7 @@ class Function():
     self.n = n
   
 
-  async def main(self, func: str, vol: float = None, amplitude: float = None, frequency: float = None, sampling_rate: float = None):
+  async def main(self, func: str, vol: float = None, amplitude: float = None, n_cycle: int = 1, frequency: float = None, sampling_rate: float = None):
     if func == 'dc':
       return await self.dc(vol)
 
@@ -21,7 +22,7 @@ class Function():
       return await self.cosx(amplitude, frequency, sampling_rate)
     
     elif func == 'triangle':
-      return await self.triangle(amplitude, frequency, sampling_rate)
+      return await self.triangle(amplitude, n_cycle)
     
     elif func == 'sawtooth':
       return await self.sawtooth(amplitude, frequency, sampling_rate)
@@ -63,16 +64,32 @@ class Function():
     return output_vols.tolist()
 
 
-  async def triangle(self, amplitude: float, frequency: float, sampling_rate: float) -> list[float]:
+  async def triangle(self, amplitude: float, n_cycle: int) -> list[float]:
     '''
     三角波
     amplitude: 振幅
-    frequency: 周波数
-    sampling_rate: サンプリング周波数
+    n_cycle: 周期の回数
     '''
-    t = np.linspace(0, self.n / sampling_rate, self.n, endpoint=False)
-    output_vols = amplitude * np.abs(2 * (t * frequency - np.floor(0.5 + t * frequency)))
-    return output_vols.tolist()
+    # 各セクションの長さを計算
+    period = self.n // n_cycle
+    quarter = period // 4
+    half = period // 2
+  
+    # 三角波の各セクションを作成
+    rise = np.linspace(0, amplitude, quarter, endpoint=False)        # 0 → amplitude
+    fall = np.linspace(amplitude, -amplitude, half, endpoint=False)  # amplitude → -amplitude
+    rise_back = np.linspace(-amplitude, 0, quarter, endpoint=False)  # -amplitude → 0
+  
+    # セクションを結合して1周期の三角波を作成
+    triangle_wave = np.concatenate([rise, fall, rise_back])
+  
+    # 周期の回数に応じてデータを複製
+    triangle_wave = np.tile(triangle_wave, n_cycle)
+  
+    # 結果を表示してリストとして返す
+    print(triangle_wave)
+    return triangle_wave.tolist()
+
 
 
   async def sawtooth(self, amplitude: float, frequency: float, sampling_rate: float) -> list[float]:

@@ -1,5 +1,5 @@
 import nidaqmx
-from nidaqmx.constants import AcquisitionType, TerminalConfiguration
+from nidaqmx.constants import AcquisitionType
 from nidaqmx.task import Task
 import time
 import datetime
@@ -66,8 +66,8 @@ class Daq():
     start_time = time.perf_counter()
     for k in range(self.n):
       # 電圧を印加
-      # output_data = [outputs[0][k], outputs[1][k]]
-      output_data = [outputs[0][k]]
+      # output_data = [outputs[0][k]]
+      output_data = [outputs[i][k] for i in range(output_num)]
       task_ao.write(output_data)
 
       # 電流値を読み取り
@@ -151,7 +151,8 @@ class Daq():
     start_time = time.perf_counter()
     for k in range(self.n):
       # 電圧を印加
-      output_data = [outputs[0][k]]
+      # output_data = [outputs[0][k]]
+      output_data = [outputs[i][k] for i in range(output_num)]
       task_ao.write(output_data)
 
       # 電流値を読み取り

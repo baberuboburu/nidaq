@@ -1,53 +1,47 @@
 import asyncio
-import nidaqmx
-from components.daq import Daq
-from components.function import Function
+from dev.one_input_multi_outputs import one_input_multi_outputs
+from dev.multi_inputs_one_output import multi_inputs_one_output
 
 
-# 変数
-func = 'triangle'  # "dc", "sinx", "cosx", "triangle", "sawtooth"
+# 1入力他出力
+func = 'triangle'   # "dc", "sinx", "cosx", "triangle", "sawtooth"
+amplitude = 3       # sinやtriangleの振幅
+frequency = None    # sinやcosの周波数
+n_cycle = 1         # triangleを何周期出力するか
+t_max = 10000       # t_max/sampling_rate = n
+sampling_rate = 10  # サンプリングレート
+output_num = 1      # 入力
+input_num = 7       # 出力
+
+# 他入力1出力
+funcs = ['triangle', 'triangle']  # "dc", "sinx", "cosx", "triangle", "sawtooth"
+amplitudes = [3, 3]
+frequencies = [0.1, 0.1]
+n_cycles = [1, 1]
 t_max = 10000
 sampling_rate = 10
-frequency = 0.1
-amplitude = 3
-n_cycle = 1
+output_num = 2
+input_num = 1
+
+# 共通設定
 username = 'sasaki'
 date = '20250106'
 filename = f'{func}{amplitude * 1000}mV'
-output_num = 1
-input_num = 7
 
 
-async def run(t_max: float, sampling_rate: float, username: str, filename: str):
-  # 定数
-  n = int(t_max / sampling_rate)
-  print(n)
+async def one_input():
+  await one_input_multi_outputs(func, t_max, sampling_rate, frequency, n_cycle, amplitude, username, date, filename, output_num, input_num)
+  return
 
-  # インスタンス化
-  dir_name = f'{username}/{date}/{func}{amplitude * 1000}mV'
-  daq = Daq(n, sampling_rate, dir_name, filename)
-  function = Function(n)
 
-  # volsリストを動的に生成
-  input_function = await function.main(func, amplitude=amplitude)
-  output_vols = [input_function]
-
-  # タスクを作成
-  task_ai = nidaqmx.Task()
-  task_ao = nidaqmx.Task()
-
-  # 電圧の印加, 出力の取り込み
-  task_ai, task_ao = await daq.main(func, task_ai, task_ao, output_vols, output_num, input_num)
-
-  # タスクの終了
-  task_ai.close()
-  task_ao.close()
-
+async def multi_inputs():
+  await multi_inputs_one_output(func, t_max, sampling_rate, frequency, n_cycle, amplitude, username, date, filename, output_num, input_num)
   return
 
 
 if __name__ == '__main__':
-  asyncio.run(run(t_max, sampling_rate, username, filename))
+  asyncio.run(one_input())
+  # asyncio.run(multi_inputs())
 
 
 
