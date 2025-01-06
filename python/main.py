@@ -2,19 +2,20 @@ import asyncio
 import nidaqmx
 from components.daq import Daq
 from components.function import Function
-from components.plot import Plot
 
 
 # 変数
-func1 = 'dc'  # "dc", "sinx", "cosx", "triangle", "sawtooth"
-func2 = 'dc'
+func = 'triangle'  # "dc", "sinx", "cosx", "triangle", "sawtooth"
 t_max = 10000
-sampling_rate = 100
-frequency = 1
+sampling_rate = 10
+frequency = 0.1
+amplitude = 3
+n_cycle = 1
 username = 'sasaki'
-filename = 'test'
-output_num = 2
-input_num = 1
+date = '20250106'
+filename = f'{func}{amplitude * 1000}mV'
+output_num = 1
+input_num = 7
 
 
 async def run(t_max: float, sampling_rate: float, username: str, filename: str):
@@ -23,29 +24,24 @@ async def run(t_max: float, sampling_rate: float, username: str, filename: str):
   print(n)
 
   # インスタンス化
-  daq = Daq(n, sampling_rate, username, filename)
+  dir_name = f'{username}/{date}/{func}{amplitude * 1000}mV'
+  daq = Daq(n, sampling_rate, dir_name, filename)
   function = Function(n)
-  plot = Plot(username, filename)
 
   # volsリストを動的に生成
-  # triangle = await function.main(func1, amplitude=1.0, frequency=frequency, sampling_rate=sampling_rate)
-  dc1 = await function.main(func1, vol=1.5)
-  dc2 = await function.main(func2, vol=0.5)
-  output_vols = [dc1, dc2]
+  input_function = await function.main(func, amplitude=amplitude)
+  output_vols = [input_function]
 
   # タスクを作成
   task_ai = nidaqmx.Task()
   task_ao = nidaqmx.Task()
 
   # 電圧の印加, 出力の取り込み
-  task_ai, task_ao, df = await daq.main(task_ai, task_ao, output_vols)
-  print(df.head(3))
+  task_ai, task_ao = await daq.main(func, task_ai, task_ao, output_vols, output_num, input_num)
 
   # タスクの終了
   task_ai.close()
   task_ao.close()
-
-  columns = ['time', 'ref_time', ] + [f"voltage_ai{i}" for i in range(1)] + [f"voltage_ao{i}" for i in range(2)]
 
   return
 
